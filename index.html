@@ -1,797 +1,120 @@
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ramkumar G — Data Engineer | Snowflake Developer</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #060910;
-    --bg2: #0a0f1a;
-    --bg3: #0d1528;
-    --blue: #2E75B6;
-    --cyan: #00C4FF;
-    --green: #70AD47;
-    --yellow: #FFC000;
-    --red: #FF6B6B;
-    --text: #e8eaf0;
-    --muted: rgba(232,234,240,0.45);
-    --border: rgba(46,117,182,0.15);
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Syne', sans-serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* Custom cursor */
-  .cursor {
-    width: 8px; height: 8px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.1s;
-    box-shadow: 0 0 10px var(--cyan);
-  }
-
-  .cursor-ring {
-    width: 30px; height: 30px;
-    border: 1px solid rgba(0,196,255,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transition: all 0.15s ease;
-  }
-
-  /* Grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(46,117,182,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(46,117,182,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Navigation */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 20px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(6,9,16,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: var(--sans);
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  .nav-logo span { color: var(--cyan); }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--cyan); }
-
-  .nav-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--green);
-    font-weight: 600;
-  }
-
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%,100%{opacity:1;transform:scale(1)}
-    50%{opacity:0.4;transform:scale(0.8)}
-  }
-
-  /* Hero */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 120px 60px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-glow {
-    position: absolute;
-    width: 600px; height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(46,117,182,0.12) 0%, transparent 65%);
-    top: -100px; left: -100px;
-    pointer-events: none;
-  }
-
-  .hero-glow2 {
-    position: absolute;
-    width: 400px; height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,196,255,0.08) 0%, transparent 65%);
-    bottom: 0; right: 100px;
-    pointer-events: none;
-  }
-
-  .hero-content { position: relative; z-index: 1; max-width: 800px; }
-
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(46,117,182,0.12);
-    border: 1px solid rgba(46,117,182,0.3);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--cyan);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 28px;
-  }
-
-  .hero-name {
-    font-family: var(--sans);
-    font-size: clamp(52px, 8vw, 96px);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -3px;
-    margin-bottom: 16px;
-  }
-
-  .hero-name .highlight { color: var(--cyan); }
-
-  .hero-role {
-    font-size: 18px;
-    color: var(--muted);
-    margin-bottom: 32px;
-    font-weight: 300;
-  }
-
-  .hero-role span { color: var(--text); font-weight: 500; }
-
-  .hero-desc {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.8;
-    max-width: 580px;
-    margin-bottom: 40px;
-  }
-
-  .hero-btns {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    background: var(--blue);
-    color: white;
-    padding: 12px 28px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: all 0.2s;
-    border: 1px solid var(--blue);
-  }
-
-  .btn-primary:hover {
-    background: var(--cyan);
-    border-color: var(--cyan);
-    transform: translateY(-2px);
-  }
-
-  .btn-secondary {
-    background: transparent;
-    color: var(--text);
-    padding: 12px 28px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: all 0.2s;
-    border: 1px solid var(--border);
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    transform: translateY(-2px);
-  }
-
-  /* Pipeline visual */
-  .hero-pipeline {
-    position: absolute;
-    right: 60px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 1;
-  }
-
-  .pipe-step {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 20px;
-    min-width: 220px;
-    transition: all 0.2s;
-  }
-
-  .pipe-step:hover {
-    border-color: rgba(46,117,182,0.4);
-    background: rgba(46,117,182,0.06);
-    transform: translateX(-4px);
-  }
-
-  .pipe-icon { font-size: 22px; }
-
-  .pipe-info { display: flex; flex-direction: column; gap: 2px; }
-
-  .pipe-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .pipe-type {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .pipe-arrow {
-    display: flex;
-    justify-content: center;
-    color: rgba(46,117,182,0.4);
-    font-size: 14px;
-    margin: -4px 0;
-  }
-
-  /* Sections */
-  section {
-    padding: 100px 60px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .section-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--cyan);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .section-title {
-    font-family: var(--sans);
-    font-size: clamp(32px, 4vw, 48px);
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 48px;
-    line-height: 1.1;
-  }
-
-  /* About */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: start;
-  }
-
-  .about-text p {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.9;
-    margin-bottom: 20px;
-  }
-
-  .about-text p strong { color: var(--text); font-weight: 600; }
-
-  .about-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .stat-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-
-  .stat-card .val {
-    font-family: var(--sans);
-    font-size: 36px;
-    font-weight: 800;
-    color: var(--cyan);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .stat-card .val.green { color: var(--green); }
-  .stat-card .val.yellow { color: var(--yellow); }
-  .stat-card .val.white { color: var(--text); }
-
-  .stat-card .lbl {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  /* Skills */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-  }
-
-  .skill-category {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px;
-    transition: border-color 0.2s;
-  }
-
-  .skill-category:hover { border-color: rgba(46,117,182,0.4); }
-
-  .skill-cat-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--cyan);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .skill-tag {
-    padding: 5px 12px;
-    border-radius: 100px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-
-  .skill-tag.blue { background: rgba(46,117,182,0.15); color: #5BA3E0; border: 1px solid rgba(46,117,182,0.25); }
-  .skill-tag.cyan { background: rgba(0,196,255,0.12); color: var(--cyan); border: 1px solid rgba(0,196,255,0.2); }
-  .skill-tag.green { background: rgba(112,173,71,0.12); color: var(--green); border: 1px solid rgba(112,173,71,0.2); }
-  .skill-tag.yellow { background: rgba(255,192,0,0.12); color: var(--yellow); border: 1px solid rgba(255,192,0,0.2); }
-  .skill-tag.red { background: rgba(255,107,107,0.12); color: var(--red); border: 1px solid rgba(255,107,107,0.2); }
-
-  /* Projects */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-
-  .project-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .project-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .project-card:hover {
-    border-color: rgba(46,117,182,0.4);
-    transform: translateY(-4px);
-  }
-
-  .project-card:hover::before { opacity: 1; }
-
-  .project-num {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--cyan);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .project-title {
-    font-family: var(--sans);
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    line-height: 1.2;
-  }
-
-  .project-flow {
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 20px;
-    padding: 8px 12px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 6px;
-    border-left: 2px solid var(--blue);
-  }
-
-  .project-problem {
-    margin-bottom: 16px;
-  }
-
-  .project-problem-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--yellow);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .project-problem p {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .project-bullets {
-    list-style: none;
-    margin-bottom: 20px;
-  }
-
-  .project-bullets li {
-    font-size: 13px;
-    color: var(--muted);
-    padding: 5px 0;
-    padding-left: 16px;
-    position: relative;
-    line-height: 1.6;
-  }
-
-  .project-bullets li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: var(--cyan);
-  }
-
-  .project-result {
-    background: rgba(112,173,71,0.08);
-    border: 1px solid rgba(112,173,71,0.2);
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 20px;
-  }
-
-  .project-result-title {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--green);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .project-result p {
-    font-size: 12px;
-    color: rgba(112,173,71,0.8);
-    line-height: 1.6;
-  }
-
-  .project-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .project-tag {
-    padding: 4px 10px;
-    background: rgba(46,117,182,0.1);
-    border: 1px solid rgba(46,117,182,0.2);
-    border-radius: 100px;
-    font-size: 10px;
-    font-weight: 600;
-    color: #5BA3E0;
-    letter-spacing: 0.3px;
-  }
-
-  .project-links {
-    display: flex;
-    gap: 12px;
-  }
-
-  .project-link {
-    font-size: 12px;
-    color: var(--cyan);
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: opacity 0.2s;
-  }
-
-  .project-link:hover { opacity: 0.7; }
-
-  /* Experience */
-  .exp-timeline {
-    position: relative;
-    padding-left: 32px;
-  }
-
-  .exp-timeline::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 8px; bottom: 8px;
-    width: 1px;
-    background: linear-gradient(180deg, var(--blue), transparent);
-  }
-
-  .exp-item {
-    position: relative;
-    margin-bottom: 48px;
-  }
-
-  .exp-item::before {
-    content: '';
-    position: absolute;
-    left: -36px; top: 6px;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--cyan);
-    box-shadow: 0 0 8px var(--cyan);
-  }
-
-  .exp-date {
-    font-size: 11px;
-    color: var(--cyan);
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .exp-title {
-    font-family: var(--sans);
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .exp-company {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-
-  .exp-bullets {
-    list-style: none;
-  }
-
-  .exp-bullets li {
-    font-size: 13px;
-    color: var(--muted);
-    padding: 4px 0;
-    padding-left: 16px;
-    position: relative;
-    line-height: 1.6;
-  }
-
-  .exp-bullets li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: var(--blue);
-  }
-
-  /* Contact */
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: start;
-  }
-
-  .contact-info { display: flex; flex-direction: column; gap: 16px; }
-
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    text-decoration: none;
-    color: var(--text);
-    transition: all 0.2s;
-  }
-
-  .contact-item:hover {
-    border-color: rgba(46,117,182,0.4);
-    transform: translateX(4px);
-  }
-
-  .contact-item-icon { font-size: 20px; }
-
-  .contact-item-info { display: flex; flex-direction: column; gap: 2px; }
-
-  .contact-item-label {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .contact-item-value { font-size: 13px; font-weight: 600; color: var(--cyan); }
-
-  .contact-cta {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px;
-  }
-
-  .contact-cta h3 {
-    font-family: var(--sans);
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    line-height: 1.2;
-  }
-
-  .contact-cta p {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 24px;
-  }
-
-  /* Footer */
-  footer {
-    padding: 40px 60px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  footer p {
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  footer span { color: var(--cyan); }
-
-  /* Snowflake advanced section */
-  .sf-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-    margin-top: 32px;
-  }
-
-  .sf-item {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    color: var(--muted);
-    transition: all 0.2s;
-  }
-
-  .sf-item:hover {
-    border-color: rgba(41,181,232,0.4);
-    color: var(--text);
-  }
-
-  .sf-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--cyan);
-    flex-shrink: 0;
-  }
-
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    .nav-links { display: none; }
-    .hero { padding: 100px 24px 60px; }
-    .hero-pipeline { display: none; }
-    section { padding: 60px 24px; }
-    .about-grid, .projects-grid, .contact-grid { grid-template-columns: 1fr; }
-    footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
-  }
+:root{--bg:#0B1120;--bg2:#111827;--blue:#3B82F6;--blue-light:#60A5FA;--cyan:#06B6D4;--cyan-light:#22D3EE;--green:#10B981;--yellow:#F59E0B;--purple:#8B5CF6;--text:#F1F5F9;--text2:#CBD5E1;--muted:#64748B;--border:rgba(59,130,246,0.2);--border2:rgba(255,255,255,0.08);--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 800px 600px at 20% 20%,rgba(59,130,246,0.08) 0%,transparent 70%),radial-gradient(ellipse 600px 500px at 80% 80%,rgba(6,182,212,0.06) 0%,transparent 70%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 64px;display:flex;justify-content:space-between;align-items:center;background:rgba(11,17,32,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border2)}
+.nav-logo{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text);text-decoration:none}.nav-logo span{color:var(--cyan)}
+.nav-links{display:flex;gap:36px;list-style:none}.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}.nav-links a:hover{color:var(--cyan-light)}
+.nav-badge{display:flex;align-items:center;gap:8px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--green)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px 64px 80px;position:relative;z-index:1}
+.hero-left{max-width:720px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);border-radius:100px;padding:7px 18px;font-size:12px;font-weight:600;color:var(--cyan-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:32px;font-family:var(--mono)}
+.hero-name{font-size:clamp(56px,7vw,92px);font-weight:900;line-height:1.0;letter-spacing:-3px;margin-bottom:20px}
+.hero-name .grad{background:linear-gradient(135deg,var(--blue-light) 0%,var(--cyan-light) 50%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-role{font-size:20px;color:var(--text2);margin-bottom:24px;font-weight:400;line-height:1.5}.hero-role strong{color:var(--text);font-weight:600}
+.hero-desc{font-size:15px;color:var(--muted);line-height:1.8;max-width:600px;margin-bottom:44px}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px}
+.btn-primary{background:linear-gradient(135deg,var(--blue) 0%,var(--cyan) 100%);color:white;padding:13px 30px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;transition:all 0.2s;box-shadow:0 4px 20px rgba(59,130,246,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(59,130,246,0.4)}
+.btn-secondary{background:rgba(255,255,255,0.05);color:var(--text2);padding:13px 30px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;transition:all 0.2s;border:1px solid var(--border2)}
+.btn-secondary:hover{background:rgba(255,255,255,0.08);border-color:rgba(6,182,212,0.4);color:var(--cyan-light);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:40px}
+.hstat{display:flex;flex-direction:column;gap:4px}
+.hstat-val{font-size:32px;font-weight:900;line-height:1;font-family:var(--mono)}
+.hstat-val.blue{color:var(--blue-light)}.hstat-val.cyan{color:var(--cyan-light)}.hstat-val.green{color:var(--green)}.hstat-val.yellow{color:var(--yellow)}
+.hstat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:500}
+.hstat-div{width:1px;background:var(--border2);align-self:stretch}
+.hero-pipeline{position:absolute;right:64px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;gap:0;z-index:1}
+.pipe-card{display:flex;align-items:center;gap:14px;background:rgba(17,24,39,0.85);border:1px solid var(--border2);border-radius:14px;padding:16px 22px;min-width:240px;transition:all 0.25s;backdrop-filter:blur(8px)}
+.pipe-card:hover{border-color:rgba(6,182,212,0.4);transform:translateX(-6px);background:rgba(6,182,212,0.05)}
+.pipe-icon{font-size:24px}.pipe-name{font-size:14px;font-weight:700;color:var(--text)}.pipe-type{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono)}
+.pipe-connector{display:flex;justify-content:flex-end;padding-right:34px;margin:-2px 0}
+.pipe-line{width:2px;height:14px;background:linear-gradient(180deg,rgba(6,182,212,0.3),rgba(6,182,212,0.6));border-radius:1px}
+section{padding:100px 64px;position:relative;z-index:1}
+.section-eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.section-title{font-size:clamp(32px,4vw,52px);font-weight:900;letter-spacing:-2px;margin-bottom:56px;line-height:1.1}
+.section-alt{background:rgba(17,24,39,0.5);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2)}
+.about-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:64px;align-items:start}
+.about-text p{font-size:15px;color:var(--text2);line-height:1.9;margin-bottom:22px}.about-text strong{color:var(--text)}
+.about-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.about-card{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:24px 20px;transition:border-color 0.2s}.about-card:hover{border-color:var(--border)}
+.about-card-val{font-size:40px;font-weight:900;line-height:1;margin-bottom:8px;font-family:var(--mono)}
+.about-card-val.blue{color:var(--blue-light)}.about-card-val.cyan{color:var(--cyan-light)}.about-card-val.green{color:var(--green)}.about-card-val.yellow{color:var(--yellow)}
+.about-card-lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:500}
+.skills-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.skill-card{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:26px;transition:all 0.2s}.skill-card:hover{border-color:var(--border);transform:translateY(-3px)}
+.skill-card-title{font-size:12px;font-weight:700;color:var(--cyan-light);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border2);font-family:var(--mono)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{padding:5px 13px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:0.3px}
+.tag.blue{background:rgba(59,130,246,0.15);color:var(--blue-light);border:1px solid rgba(59,130,246,0.25)}
+.tag.cyan{background:rgba(6,182,212,0.12);color:var(--cyan-light);border:1px solid rgba(6,182,212,0.22)}
+.tag.green{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.22)}
+.tag.yellow{background:rgba(245,158,11,0.12);color:var(--yellow);border:1px solid rgba(245,158,11,0.22)}
+.tag.purple{background:rgba(139,92,246,0.12);color:#A78BFA;border:1px solid rgba(139,92,246,0.22)}
+.projects-wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.project-card{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:34px;transition:all 0.3s;position:relative;overflow:hidden}
+.project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity 0.3s}
+.project-card.p1::before{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.project-card.p2::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
+.project-card.p3::before{background:linear-gradient(90deg,var(--green),var(--cyan))}
+.project-card:hover{border-color:rgba(59,130,246,0.35);transform:translateY(-5px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}.project-card:hover::before{opacity:1}
+.project-num{font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;font-family:var(--mono)}
+.project-title{font-size:22px;font-weight:800;margin-bottom:10px;letter-spacing:-0.5px;line-height:1.2}
+.project-flow{font-size:11px;color:var(--muted);margin-bottom:22px;padding:8px 14px;background:rgba(0,0,0,0.3);border-radius:8px;border-left:2px solid var(--blue);font-family:var(--mono)}
+.project-label{font-size:10px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.project-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:18px}
+.project-bullets{list-style:none;margin-bottom:20px}
+.project-bullets li{font-size:13px;color:var(--text2);padding:5px 0 5px 18px;position:relative;line-height:1.6}
+.project-bullets li::before{content:'▸';position:absolute;left:0;color:var(--cyan)}
+.project-result{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.18);border-radius:10px;padding:12px 16px;margin-bottom:20px}
+.project-result-label{font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.project-result p{font-size:12px;color:rgba(16,185,129,0.85);line-height:1.6}
+.project-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.ptag{padding:4px 11px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:100px;font-size:10px;font-weight:600;color:var(--blue-light)}
+.project-links{display:flex;gap:14px}
+.plink{font-size:13px;color:var(--cyan-light);text-decoration:none;font-weight:600;transition:opacity 0.2s}.plink:hover{opacity:0.7}
+.sf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:36px}
+.sf-item{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text2);transition:all 0.2s;font-weight:500}
+.sf-item:hover{border-color:rgba(6,182,212,0.35);color:var(--text);background:rgba(6,182,212,0.05)}
+.sf-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);flex-shrink:0;box-shadow:0 0 6px rgba(6,182,212,0.5)}
+.timeline{position:relative;padding-left:36px}
+.timeline::before{content:'';position:absolute;left:0;top:10px;bottom:10px;width:2px;background:linear-gradient(180deg,var(--blue),rgba(59,130,246,0.1));border-radius:1px}
+.exp-item{position:relative;margin-bottom:52px}
+.exp-item::before{content:'';position:absolute;left:-41px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px rgba(6,182,212,0.6)}
+.exp-date{font-size:12px;color:var(--cyan);font-weight:600;letter-spacing:0.5px;margin-bottom:6px;font-family:var(--mono)}
+.exp-title{font-size:22px;font-weight:800;margin-bottom:4px;letter-spacing:-0.5px}
+.exp-company{font-size:14px;color:var(--muted);margin-bottom:18px}
+.exp-bullets{list-style:none}
+.exp-bullets li{font-size:14px;color:var(--text2);padding:5px 0 5px 18px;position:relative;line-height:1.6}
+.exp-bullets li::before{content:'▸';position:absolute;left:0;color:var(--blue-light)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+.contact-list{display:flex;flex-direction:column;gap:14px}
+.contact-card{display:flex;align-items:center;gap:18px;padding:18px 22px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;text-decoration:none;color:var(--text);transition:all 0.2s}
+.contact-card:hover{border-color:var(--border);transform:translateX(5px);background:rgba(59,130,246,0.05)}
+.contact-icon{font-size:22px}.contact-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}.contact-val{font-size:14px;font-weight:600;color:var(--cyan-light)}
+.contact-cta{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:44px}
+.contact-cta h3{font-size:30px;font-weight:900;margin-bottom:14px;letter-spacing:-1px;line-height:1.2}
+.contact-cta p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px}
+footer{padding:40px 64px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+footer p{font-size:13px;color:var(--muted)}footer span{color:var(--cyan-light)}
+@media(max-width:960px){nav{padding:16px 24px}.nav-links{display:none}.hero{padding:100px 24px 60px}.hero-pipeline{display:none}section{padding:64px 24px}.about-grid,.projects-wrap,.contact-grid{grid-template-columns:1fr}.hero-stats{gap:24px;flex-wrap:wrap}footer{padding:24px;flex-direction:column;gap:8px;text-align:center}}
 </style>
 </head>
 <body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<!-- Navigation -->
 <nav>
-  <a href="#" class="nav-logo">RAM<span>.</span>DEV</a>
+  <a href="#" class="nav-logo">RG<span>.dev</span></a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
@@ -799,282 +122,170 @@
     <li><a href="#experience">Experience</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    Open to Work
-  </div>
+  <div class="nav-badge"><div class="pulse"></div>Open to Work</div>
 </nav>
 
-<!-- Hero -->
 <section class="hero" id="home">
-  <div class="hero-glow"></div>
-  <div class="hero-glow2"></div>
-  <div class="hero-content">
-    <div class="hero-tag">
-      <div class="status-dot"></div>
-      Aspiring Data Engineer & Snowflake Developer
-    </div>
-    <h1 class="hero-name">
-      Ramkumar<br><span class="highlight">G</span>
-    </h1>
-    <p class="hero-role">
-      <span>Snowflake</span> · <span>Fivetran</span> · <span>AWS</span> · <span>Power BI</span> · <span>Informatica IICS</span>
-    </p>
-    <p class="hero-desc">
-      BSc Computer Science student building production-grade ELT pipelines from scratch.
-      2 end-to-end projects · Advanced Snowflake knowledge · Open to fresher & trainee roles.
-    </p>
+  <div class="hero-left">
+    <div class="hero-eyebrow"><div class="pulse"></div>Aspiring Data Engineer & Snowflake Developer</div>
+    <h1 class="hero-name">Ramkumar<br><span class="grad">G</span></h1>
+    <p class="hero-role"><strong>Snowflake</strong> · <strong>Fivetran</strong> · <strong>AWS</strong> · <strong>Power BI</strong> · <strong>Informatica IICS</strong></p>
+    <p class="hero-desc">Building production-grade ELT pipelines from scratch. 3 end-to-end projects · Advanced Snowflake knowledge · Open to fresher & trainee roles across India.</p>
     <div class="hero-btns">
-      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="#projects" class="btn-primary">View Projects →</a>
       <a href="https://linkedin.com/in/ramdba" target="_blank" class="btn-secondary">LinkedIn ↗</a>
       <a href="https://github.com/Ramkumar-g-dba" target="_blank" class="btn-secondary">GitHub ↗</a>
     </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-val blue">3</div><div class="hstat-lbl">Projects</div></div>
+      <div class="hstat-div"></div>
+      <div class="hstat"><div class="hstat-val cyan">30+</div><div class="hstat-lbl">SF Concepts</div></div>
+      <div class="hstat-div"></div>
+      <div class="hstat"><div class="hstat-val green">5+</div><div class="hstat-lbl">Tools</div></div>
+      <div class="hstat-div"></div>
+      <div class="hstat"><div class="hstat-val yellow">2026</div><div class="hstat-lbl">Batch</div></div>
+    </div>
   </div>
-
   <div class="hero-pipeline">
-    <div class="pipe-step">
-      <div class="pipe-icon">☁️</div>
-      <div class="pipe-info">
-        <div class="pipe-name">AWS RDS / S3</div>
-        <div class="pipe-type">Source Layer</div>
-      </div>
-    </div>
-    <div class="pipe-arrow">↓</div>
-    <div class="pipe-step">
-      <div class="pipe-icon">⚡</div>
-      <div class="pipe-info">
-        <div class="pipe-name">Fivetran / IICS</div>
-        <div class="pipe-type">ELT Integration</div>
-      </div>
-    </div>
-    <div class="pipe-arrow">↓</div>
-    <div class="pipe-step">
-      <div class="pipe-icon">❄️</div>
-      <div class="pipe-info">
-        <div class="pipe-name">Snowflake</div>
-        <div class="pipe-type">Cloud DWH</div>
-      </div>
-    </div>
-    <div class="pipe-arrow">↓</div>
-    <div class="pipe-step">
-      <div class="pipe-icon">📊</div>
-      <div class="pipe-info">
-        <div class="pipe-name">Power BI</div>
-        <div class="pipe-type">Reporting</div>
-      </div>
-    </div>
+    <div class="pipe-card"><div class="pipe-icon">☁️</div><div><div class="pipe-name">AWS RDS / S3</div><div class="pipe-type">Source Layer</div></div></div>
+    <div class="pipe-connector"><div class="pipe-line"></div></div>
+    <div class="pipe-card"><div class="pipe-icon">⚡</div><div><div class="pipe-name">Fivetran / IICS</div><div class="pipe-type">ELT Integration</div></div></div>
+    <div class="pipe-connector"><div class="pipe-line"></div></div>
+    <div class="pipe-card"><div class="pipe-icon">❄️</div><div><div class="pipe-name">Snowflake</div><div class="pipe-type">Cloud DWH</div></div></div>
+    <div class="pipe-connector"><div class="pipe-line"></div></div>
+    <div class="pipe-card"><div class="pipe-icon">📊</div><div><div class="pipe-name">Power BI</div><div class="pipe-type">Live Reporting</div></div></div>
   </div>
 </section>
 
-<!-- About -->
-<section id="about">
-  <div class="section-label">// 01. about</div>
+<section id="about" class="section-alt">
+  <div class="section-eyebrow">// 01. about</div>
   <h2 class="section-title">Who I Am</h2>
   <div class="about-grid">
     <div class="about-text">
-      <p>
-        I'm <strong>Ramkumar G</strong>, an aspiring Data Engineer and Snowflake Developer from Dindigul, Tamil Nadu.
-        Currently completing my <strong>BSc in Computer Science</strong> from Anugraha Institute of Social Sciences,
-        Madurai Kamaraj University (2023–2026).
-      </p>
-      <p>
-        I have built <strong>2 end-to-end ELT pipelines</strong> from scratch using industry tools —
-        Snowflake, Fivetran, Informatica IICS, AWS, and Power BI. Beyond projects, I have deep
-        knowledge of advanced Snowflake features including <strong>Time Travel, Cloning, RBAC,
-        Data Sharing, Query Optimization, and Replication</strong>.
-      </p>
-      <p>
-        My goal is to join a fast-paced data engineering team as a <strong>Snowflake Developer
-        or Data Engineer</strong> and contribute to building scalable data infrastructure.
-      </p>
+      <p>I'm <strong>Ramkumar G</strong>, an aspiring Data Engineer and Snowflake Developer from Dindigul, Tamil Nadu. I completed my <strong>BSc in Computer Science</strong> from Anugraha Institute of Social Sciences, Madurai Kamaraj University (2023–2026).</p>
+      <p>I have built <strong>3 end-to-end ELT pipelines</strong> from scratch using industry tools — Snowflake, Fivetran, Informatica IICS, AWS, and Power BI. Beyond projects, I have deep knowledge of advanced Snowflake features including <strong>Time Travel, Cloning, RBAC, Data Sharing, Query Optimization, Cost Optimization, and Replication</strong>.</p>
+      <p>My goal is to join a fast-paced data engineering team as a <strong>Snowflake Developer or Data Engineer</strong> and contribute to building scalable, cost-efficient data infrastructure.</p>
     </div>
-    <div class="about-stats">
-      <div class="stat-card">
-        <div class="val">2</div>
-        <div class="lbl">ELT Projects</div>
-      </div>
-      <div class="stat-card">
-        <div class="val green">5+</div>
-        <div class="lbl">Tools Mastered</div>
-      </div>
-      <div class="stat-card">
-        <div class="val yellow">30+</div>
-        <div class="lbl">Snowflake Concepts</div>
-      </div>
-      <div class="stat-card">
-        <div class="val white">2026</div>
-        <div class="lbl">Graduating</div>
-      </div>
+    <div class="about-cards">
+      <div class="about-card"><div class="about-card-val blue">3</div><div class="about-card-lbl">ELT Projects</div></div>
+      <div class="about-card"><div class="about-card-val cyan">5+</div><div class="about-card-lbl">Tools Mastered</div></div>
+      <div class="about-card"><div class="about-card-val green">30+</div><div class="about-card-lbl">SF Concepts</div></div>
+      <div class="about-card"><div class="about-card-val yellow">2026</div><div class="about-card-lbl">Graduated</div></div>
     </div>
   </div>
 </section>
 
-<!-- Skills -->
-<section id="skills" style="background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-  <div class="section-label">// 02. skills</div>
+<section id="skills">
+  <div class="section-eyebrow">// 02. skills</div>
   <h2 class="section-title">Tech Stack</h2>
-
-  <div class="skills-grid">
-    <div class="skill-category">
-      <div class="skill-cat-title">❄️ Snowflake — Advanced</div>
-      <div class="skill-tags">
-        <span class="skill-tag cyan">Streams & Tasks</span>
-        <span class="skill-tag cyan">Time Travel</span>
-        <span class="skill-tag cyan">Cloning</span>
-        <span class="skill-tag cyan">RBAC</span>
-        <span class="skill-tag cyan">Data Sharing</span>
-        <span class="skill-tag cyan">Query Optimization</span>
-        <span class="skill-tag cyan">Clustering</span>
-        <span class="skill-tag cyan">External Tables</span>
-        <span class="skill-tag cyan">UDFs & UDTFs</span>
-        <span class="skill-tag cyan">Replication</span>
-        <span class="skill-tag cyan">Scripting</span>
-        <span class="skill-tag cyan">Resource Monitors</span>
+  <div class="skills-wrap">
+    <div class="skill-card">
+      <div class="skill-card-title">❄️ Snowflake — Advanced</div>
+      <div class="tags">
+        <span class="tag cyan">Streams & Tasks</span><span class="tag cyan">Time Travel</span><span class="tag cyan">Cloning</span><span class="tag cyan">RBAC</span><span class="tag cyan">Data Sharing</span><span class="tag cyan">Query Optimization</span><span class="tag cyan">Cost Optimization</span><span class="tag cyan">Clustering</span><span class="tag cyan">External Tables</span><span class="tag cyan">UDFs & UDTFs</span><span class="tag cyan">Replication</span><span class="tag cyan">Resource Monitors</span>
       </div>
     </div>
-
-    <div class="skill-category">
-      <div class="skill-cat-title">⚡ ELT & Integration</div>
-      <div class="skill-tags">
-        <span class="skill-tag blue">Fivetran</span>
-        <span class="skill-tag blue">Informatica IICS</span>
-        <span class="skill-tag blue">CDC (binlog)</span>
-        <span class="skill-tag blue">Incremental Sync</span>
-        <span class="skill-tag blue">Schema Evolution</span>
-        <span class="skill-tag blue">Star Schema</span>
-        <span class="skill-tag blue">Data Modeling</span>
+    <div class="skill-card">
+      <div class="skill-card-title">⚡ ELT & Integration</div>
+      <div class="tags">
+        <span class="tag blue">Fivetran</span><span class="tag blue">Informatica IICS</span><span class="tag blue">CDC (binlog)</span><span class="tag blue">Incremental Sync</span><span class="tag blue">Schema Evolution</span><span class="tag blue">Star Schema</span><span class="tag blue">Data Modeling</span><span class="tag blue">ELT Pipelines</span>
       </div>
     </div>
-
-    <div class="skill-category">
-      <div class="skill-cat-title">☁️ Cloud & Database</div>
-      <div class="skill-tags">
-        <span class="skill-tag green">AWS S3</span>
-        <span class="skill-tag green">AWS RDS</span>
-        <span class="skill-tag green">IAM Roles</span>
-        <span class="skill-tag green">MySQL</span>
-        <span class="skill-tag green">Oracle SQL</span>
-        <span class="skill-tag green">SQL — Advanced</span>
-        <span class="skill-tag green">Python</span>
+    <div class="skill-card">
+      <div class="skill-card-title">☁️ Cloud & Database</div>
+      <div class="tags">
+        <span class="tag green">AWS S3</span><span class="tag green">AWS RDS</span><span class="tag green">IAM Roles</span><span class="tag green">MySQL</span><span class="tag green">Oracle SQL</span><span class="tag green">SQL — Advanced</span><span class="tag green">Python</span>
       </div>
     </div>
-
-    <div class="skill-category">
-      <div class="skill-cat-title">📊 BI & DevOps</div>
-      <div class="skill-tags">
-        <span class="skill-tag yellow">Power BI</span>
-        <span class="skill-tag yellow">DAX</span>
-        <span class="skill-tag yellow">DirectQuery</span>
-        <span class="skill-tag yellow">Data Modeling</span>
-        <span class="skill-tag red">GitHub</span>
-        <span class="skill-tag red">Linux</span>
-        <span class="skill-tag red">Windows</span>
+    <div class="skill-card">
+      <div class="skill-card-title">📊 BI & DevOps</div>
+      <div class="tags">
+        <span class="tag yellow">Power BI</span><span class="tag yellow">DAX</span><span class="tag yellow">DirectQuery</span><span class="tag yellow">Data Modeling</span><span class="tag purple">GitHub</span><span class="tag purple">Linux</span><span class="tag purple">Windows</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Projects -->
-<section id="projects">
-  <div class="section-label">// 03. projects</div>
+<section id="projects" class="section-alt">
+  <div class="section-eyebrow">// 03. projects</div>
   <h2 class="section-title">What I Built</h2>
-
-  <div class="projects-grid">
-
-    <!-- Project 1 -->
-    <div class="project-card">
+  <div class="projects-wrap">
+    <div class="project-card p1">
       <div class="project-num">Project 01 · Dec 2025 – Feb 2026</div>
-      <h3 class="project-title">End-to-End Modern Data Stack Pipeline</h3>
+      <div class="project-title">End-to-End Modern Data Stack Pipeline</div>
       <div class="project-flow">AWS RDS (MySQL) → Fivetran → Snowflake → Power BI</div>
-
-      <div class="project-problem">
-        <div class="project-problem-title">🎯 Problem Statement</div>
-        <p>Build an automated cloud data pipeline that continuously syncs transactional MySQL data into a Snowflake data warehouse and delivers live business insights via Power BI.</p>
-      </div>
-
+      <div class="project-label">🎯 Problem Statement</div>
+      <div class="project-desc">Build an automated cloud data pipeline that continuously syncs transactional MySQL data into Snowflake and delivers live business insights via Power BI.</div>
       <ul class="project-bullets">
-        <li>Architected multi-layer ELT framework (RAW → STAGING → ANALYTICS) in Snowflake</li>
+        <li>Architected multi-layer ELT framework (RAW → STAGING → ANALYTICS)</li>
         <li>Configured Fivetran with CDC (binary log) for incremental sync from AWS RDS MySQL</li>
         <li>Implemented Star Schema with Fact & Dimension tables for BI optimization</li>
         <li>Automated pipeline using Snowflake Streams (APPEND_ONLY) + Tasks (5-min schedule)</li>
         <li>Integrated AWS S3 with Snowflake using IAM Roles and Trust Policies</li>
         <li>Delivered live Power BI dashboard via DirectQuery with advanced DAX measures</li>
       </ul>
-
       <div class="project-result">
-        <div class="project-result-title">✅ Result</div>
-        <p>Near real-time pipeline with 5-min refresh · ₹1.78L revenue tracked · 80% orders completed · Live Power BI dashboard</p>
+        <div class="project-result-label">✅ Result</div>
+        <p>Near real-time pipeline · ₹1.78L revenue tracked · 80% orders completed · Live dashboard</p>
       </div>
-
-      <div class="project-tags">
-        <span class="project-tag">Snowflake</span>
-        <span class="project-tag">Fivetran</span>
-        <span class="project-tag">AWS RDS</span>
-        <span class="project-tag">Power BI</span>
-        <span class="project-tag">SQL</span>
-        <span class="project-tag">Star Schema</span>
-        <span class="project-tag">CDC</span>
-      </div>
-
-      <div class="project-links">
-        <a href="https://github.com/Ramkumar-g-dba/mds-pipeline-snowflake" target="_blank" class="project-link">GitHub ↗</a>
-        <a href="https://linkedin.com/in/ramdba" target="_blank" class="project-link">LinkedIn ↗</a>
-      </div>
+      <div class="project-tags"><span class="ptag">Snowflake</span><span class="ptag">Fivetran</span><span class="ptag">AWS RDS</span><span class="ptag">Power BI</span><span class="ptag">Star Schema</span><span class="ptag">CDC</span></div>
+      <div class="project-links"><a href="https://github.com/Ramkumar-g-dba/mds-pipeline-snowflake" target="_blank" class="plink">GitHub ↗</a><a href="https://linkedin.com/in/ramdba" target="_blank" class="plink">LinkedIn ↗</a></div>
     </div>
 
-    <!-- Project 2 -->
-    <div class="project-card">
+    <div class="project-card p2">
       <div class="project-num">Project 02 · Dec 2025 – Feb 2026</div>
-      <h3 class="project-title">Multi-Source ELT Analytics Pipeline</h3>
+      <div class="project-title">Multi-Source ELT Analytics Pipeline</div>
       <div class="project-flow">AWS S3 + Oracle SQL → Informatica IICS → Snowflake → Power BI</div>
-
-      <div class="project-problem">
-        <div class="project-problem-title">🎯 Problem Statement</div>
-        <p>Build an enterprise-grade multi-source ELT pipeline that integrates heterogeneous data sources and delivers real-time analytics without physical table storage overhead.</p>
-      </div>
-
+      <div class="project-label">🎯 Problem Statement</div>
+      <div class="project-desc">Build an enterprise-grade multi-source ELT pipeline integrating heterogeneous sources with real-time analytics and zero storage overhead.</div>
       <ul class="project-bullets">
-        <li>Designed multi-source ingestion combining AWS S3 (CSV) + Oracle SQL Developer</li>
+        <li>Designed multi-source ingestion — AWS S3 (CSV) + Oracle SQL Developer</li>
         <li>Built source-to-target mappings in Informatica IICS for multi-source integration</li>
         <li>Applied Star Schema using Snowflake Views — zero storage cost, real-time accuracy</li>
         <li>Created Fact & Dimension views for optimized BI query performance</li>
         <li>Connected Snowflake to Power BI via DirectQuery for live business dashboards</li>
       </ul>
-
       <div class="project-result">
-        <div class="project-result-title">✅ Result</div>
-        <p>2 heterogeneous sources unified · Zero storage cost via Views · Real-time Power BI dashboards · Production-grade Star Schema</p>
+        <div class="project-result-label">✅ Result</div>
+        <p>2 heterogeneous sources unified · Zero storage cost via Views · Real-time dashboards</p>
       </div>
-
-      <div class="project-tags">
-        <span class="project-tag">Informatica IICS</span>
-        <span class="project-tag">Oracle SQL</span>
-        <span class="project-tag">AWS S3</span>
-        <span class="project-tag">Snowflake</span>
-        <span class="project-tag">Power BI</span>
-        <span class="project-tag">Views</span>
-        <span class="project-tag">ELT</span>
-      </div>
-
-      <div class="project-links">
-        <a href="https://github.com/Ramkumar-g-dba/multi-source-elt-pipeline" target="_blank" class="project-link">GitHub ↗</a>
-        <a href="https://linkedin.com/in/ramdba" target="_blank" class="project-link">LinkedIn ↗</a>
-      </div>
+      <div class="project-tags"><span class="ptag">Informatica IICS</span><span class="ptag">Oracle SQL</span><span class="ptag">AWS S3</span><span class="ptag">Snowflake</span><span class="ptag">Views</span><span class="ptag">ELT</span></div>
+      <div class="project-links"><a href="https://github.com/Ramkumar-g-dba/multi-source-elt-pipeline" target="_blank" class="plink">GitHub ↗</a><a href="https://linkedin.com/in/ramdba" target="_blank" class="plink">LinkedIn ↗</a></div>
     </div>
 
+    <div class="project-card p3" style="grid-column:1/-1">
+      <div class="project-num">Project 03 · Apr 2026 – Present</div>
+      <div class="project-title">Snowflake Cost Optimization</div>
+      <div class="project-flow">Query Analysis → SQL Optimization → Warehouse Tuning → Resource Monitor → Cost Dashboard</div>
+      <div class="project-label">🎯 Problem Statement</div>
+      <div class="project-desc">Identify and reduce unnecessary Snowflake credit usage through query optimization, warehouse right-sizing, partition pruning, and automated cost monitoring using ACCOUNT_USAGE views.</div>
+      <ul class="project-bullets">
+        <li>Identified inefficient queries causing full table scans (SELECT *, no WHERE filters)</li>
+        <li>Optimized SQL with filters enabling partition pruning — reduced data scanned by ~85%</li>
+        <li>Right-sized warehouse (SMALL → X-SMALL) — 50% credit reduction per query</li>
+        <li>Reduced auto-suspend from 5 min → 60 sec — eliminated idle compute cost</li>
+        <li>Implemented Resource Monitor with credit limits and automated alerts at 75% & 90%</li>
+        <li>Built cost monitoring dashboard using SNOWFLAKE.ACCOUNT_USAGE views</li>
+      </ul>
+      <div class="project-result">
+        <div class="project-result-label">✅ Result</div>
+        <p>~30% overall credit reduction · 85% less data scanned · Automated cost alerts · Real-time usage dashboard</p>
+      </div>
+      <div class="project-tags"><span class="ptag">Snowflake</span><span class="ptag">Cost Optimization</span><span class="ptag">Query Tuning</span><span class="ptag">Resource Monitor</span><span class="ptag">ACCOUNT_USAGE</span><span class="ptag">Partition Pruning</span></div>
+      <div class="project-links"><a href="https://github.com/Ramkumar-g-dba/snowflake-cost-optimization" target="_blank" class="plink">GitHub ↗</a><a href="https://linkedin.com/in/ramdba" target="_blank" class="plink">LinkedIn ↗</a></div>
+    </div>
   </div>
 </section>
 
-<!-- Advanced Snowflake -->
-<section style="background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-  <div class="section-label">// 04. snowflake knowledge</div>
+<section>
+  <div class="section-eyebrow">// 04. snowflake knowledge</div>
   <h2 class="section-title">Advanced Snowflake</h2>
-  <p style="font-size:14px;color:var(--muted);margin-bottom:8px;">Beyond projects — deep knowledge in 30+ Snowflake features:</p>
-
+  <p style="font-size:15px;color:var(--muted)">Beyond projects — deep hands-on knowledge in 30+ Snowflake features:</p>
   <div class="sf-grid">
     <div class="sf-item"><div class="sf-dot"></div>Time Travel & Cloning</div>
     <div class="sf-item"><div class="sf-dot"></div>RBAC & Access Policies</div>
     <div class="sf-item"><div class="sf-dot"></div>Query Optimization</div>
+    <div class="sf-item"><div class="sf-dot"></div>Cost Optimization</div>
     <div class="sf-item"><div class="sf-dot"></div>Data Clustering</div>
     <div class="sf-item"><div class="sf-dot"></div>Search Optimization</div>
     <div class="sf-item"><div class="sf-dot"></div>Query Acceleration</div>
@@ -1087,129 +298,64 @@
     <div class="sf-item"><div class="sf-dot"></div>Resource Monitors</div>
     <div class="sf-item"><div class="sf-dot"></div>Alerts & Notifications</div>
     <div class="sf-item"><div class="sf-dot"></div>Password & Session Policies</div>
-    <div class="sf-item"><div class="sf-dot"></div>Managed Access Schemas</div>
     <div class="sf-item"><div class="sf-dot"></div>Data Loading Best Practices</div>
-    <div class="sf-item"><div class="sf-dot"></div>Database Roles</div>
     <div class="sf-item"><div class="sf-dot"></div>Continuous Data Protection</div>
     <div class="sf-item"><div class="sf-dot"></div>Virtual Warehouses</div>
+    <div class="sf-item"><div class="sf-dot"></div>Snowpipe Auto-Ingest</div>
   </div>
 </section>
 
-<!-- Experience -->
-<section id="experience">
-  <div class="section-label">// 05. experience</div>
+<section id="experience" class="section-alt">
+  <div class="section-eyebrow">// 05. experience</div>
   <h2 class="section-title">Journey</h2>
-
-  <div class="exp-timeline">
+  <div class="timeline">
     <div class="exp-item">
       <div class="exp-date">Dec 2025 — Present</div>
       <div class="exp-title">Snowflake Developer Trainee</div>
       <div class="exp-company">Self-Directed Learning / Hands-on Practice · Remote</div>
       <ul class="exp-bullets">
-        <li>Built 2 production-grade ELT pipelines using Snowflake, Fivetran, IICS, AWS & Power BI</li>
-        <li>Implemented multi-layer architecture (RAW → STAGING → ANALYTICS) with Star Schema modeling</li>
+        <li>Built 3 production-grade ELT pipelines using Snowflake, Fivetran, IICS, AWS & Power BI</li>
+        <li>Implemented multi-layer ELT architecture (RAW → STAGING → ANALYTICS) with Star Schema</li>
         <li>Automated workflows using Snowflake Streams, Tasks, and CDC via Fivetran binlog</li>
-        <li>Gained hands-on knowledge of 30+ advanced Snowflake features</li>
-        <li>Delivered live Power BI dashboards via DirectQuery with DAX measures</li>
+        <li>Optimized Snowflake costs — reduced credit usage by ~30% through query and warehouse tuning</li>
+        <li>Gained deep hands-on knowledge of 30+ advanced Snowflake features</li>
       </ul>
     </div>
-
     <div class="exp-item">
-      <div class="exp-date">2023 — Present</div>
+      <div class="exp-date">2023 — 2026</div>
       <div class="exp-title">BSc Computer Science</div>
       <div class="exp-company">Anugraha Institute of Social Sciences · Madurai Kamaraj University</div>
       <ul class="exp-bullets">
         <li>Core coursework in Computer Science, Databases, and Programming</li>
-        <li>Focused on Data Engineering, Cloud Platforms & SQL</li>
-        <li>Expected graduation: 2026</li>
+        <li>Focused on Data Engineering, Cloud Platforms & SQL throughout degree</li>
+        <li>Graduated 2026</li>
       </ul>
     </div>
   </div>
 </section>
 
-<!-- Contact -->
 <section id="contact">
-  <div class="section-label">// 06. contact</div>
+  <div class="section-eyebrow">// 06. contact</div>
   <h2 class="section-title">Let's Connect</h2>
-
   <div class="contact-grid">
-    <div class="contact-info">
-      <a href="mailto:ramkumar.g.dba@gmail.com" class="contact-item">
-        <div class="contact-item-icon">📧</div>
-        <div class="contact-item-info">
-          <div class="contact-item-label">Email</div>
-          <div class="contact-item-value">ramkumar.g.dba@gmail.com</div>
-        </div>
-      </a>
-      <a href="tel:+918668129002" class="contact-item">
-        <div class="contact-item-icon">📱</div>
-        <div class="contact-item-info">
-          <div class="contact-item-label">Phone</div>
-          <div class="contact-item-value">+91 8668129002</div>
-        </div>
-      </a>
-      <a href="https://linkedin.com/in/ramdba" target="_blank" class="contact-item">
-        <div class="contact-item-icon">🔗</div>
-        <div class="contact-item-info">
-          <div class="contact-item-label">LinkedIn</div>
-          <div class="contact-item-value">linkedin.com/in/ramdba</div>
-        </div>
-      </a>
-      <a href="https://github.com/Ramkumar-g-dba" target="_blank" class="contact-item">
-        <div class="contact-item-icon">💻</div>
-        <div class="contact-item-info">
-          <div class="contact-item-label">GitHub</div>
-          <div class="contact-item-value">github.com/Ramkumar-g-dba</div>
-        </div>
-      </a>
-      <div class="contact-item">
-        <div class="contact-item-icon">📍</div>
-        <div class="contact-item-info">
-          <div class="contact-item-label">Location</div>
-          <div class="contact-item-value">Dindigul, Tamil Nadu, India</div>
-        </div>
-      </div>
+    <div class="contact-list">
+      <a href="mailto:ramkumar.g.dba@gmail.com" class="contact-card"><div class="contact-icon">📧</div><div><div class="contact-lbl">Email</div><div class="contact-val">ramkumar.g.dba@gmail.com</div></div></a>
+      <a href="tel:+918668129002" class="contact-card"><div class="contact-icon">📱</div><div><div class="contact-lbl">Phone</div><div class="contact-val">+91 8668129002</div></div></a>
+      <a href="https://linkedin.com/in/ramdba" target="_blank" class="contact-card"><div class="contact-icon">🔗</div><div><div class="contact-lbl">LinkedIn</div><div class="contact-val">linkedin.com/in/ramdba</div></div></a>
+      <a href="https://github.com/Ramkumar-g-dba" target="_blank" class="contact-card"><div class="contact-icon">💻</div><div><div class="contact-lbl">GitHub</div><div class="contact-val">github.com/Ramkumar-g-dba</div></div></a>
+      <div class="contact-card"><div class="contact-icon">📍</div><div><div class="contact-lbl">Location</div><div class="contact-val">Dindigul, Tamil Nadu, India</div></div></div>
     </div>
-
     <div class="contact-cta">
       <h3>Open to Opportunities</h3>
-      <p>
-        Looking for fresher / trainee roles in Data Engineering or Snowflake Development.
-        Open to remote, hybrid, or on-site positions across India.
-      </p>
+      <p>Looking for fresher / trainee roles in Data Engineering or Snowflake Development. Open to remote, hybrid, or on-site positions across India.</p>
       <a href="mailto:ramkumar.g.dba@gmail.com" class="btn-primary">Send Message →</a>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
 <footer>
-  <p>© 2026 <span>Ramkumar G</span> · Data Engineer in Progress</p>
+  <p>© 2026 <span>Ramkumar G</span> · Data Engineer</p>
   <p>Built with passion · <span>Open to Work</span></p>
 </footer>
-
-<script>
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-
-  document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX - 4 + 'px';
-    cursor.style.top = e.clientY - 4 + 'px';
-    ring.style.left = e.clientX - 15 + 'px';
-    ring.style.top = e.clientY - 15 + 'px';
-  });
-
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'scale(2)';
-      ring.style.transform = 'scale(1.5)';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'scale(1)';
-      ring.style.transform = 'scale(1)';
-    });
-  });
-</script>
-
 </body>
 </html>
